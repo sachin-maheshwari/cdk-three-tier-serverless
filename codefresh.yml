@@ -7,7 +7,7 @@
  - prepare
  - build
  - test
- - deploy
+ #- deploy
 #
 
  steps:
@@ -32,7 +32,6 @@
      working_directory: './${{CF_REPO_NAME}}'
      tag: ${{CF_BRANCH_TAG_NORMALIZED}}
      dockerfile: Dockerfile
-     registry: "docker.io"
      disable_push: true
      when:
       steps:
