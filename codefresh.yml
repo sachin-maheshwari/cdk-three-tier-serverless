@@ -7,7 +7,7 @@
  - prepare
  - build
  - test
-# - deploy
+ - deploy
 #
 
  steps:
@@ -19,16 +19,11 @@
     revision: '${{CF_REVISION}}'
     stage: prepare
    MyOwnStep:
-     title: Variable example
+     title: "Variable example"
      image: alpine
      commands: 
        - echo $CF_BUILD_ID 
        - echo $CF_BRANCH_TAG_NORMALIZED 
-     when:
-      steps:
-        - name: clone
-          on:
-            - success
    MyAppDockerImage:
      title: Building Docker Image
      type: build
@@ -44,9 +39,25 @@
         - name: clone
           on:
             - success
-   aws_test:
-    stage: "test"
-    title: "aws deploy testing"
+   unit_test:
+    stage: test
+    title: Unit testing
+    image: ${{MyAppDockerImage}}
+    fail_fast: true
+    working_directory: /app
+    commands:
+      - npm test
+    environment:
+      - AWS_ACCESS_KEY_ID=${{AWS_ACCESS_KEY_ID}}
+      - AWS_SECRET_ACCESS_KEY=${{AWS_SECRET_ACCESS_KEY}}
+    when:
+      steps:
+        - name: MyAppDockerImage
+          on:
+            - success
+   aws_deploy:
+    stage: "deploy"
+    title: "AWS deploy testing"
     image: ${{MyAppDockerImage}}
     fail_fast: true
     working_directory: /app
@@ -57,7 +68,7 @@
       - AWS_SECRET_ACCESS_KEY=${{AWS_SECRET_ACCESS_KEY}}
     when:
       steps:
-        - name: MyAppDockerImage
+        - name: unit_test
           on:
             - success 
 #
