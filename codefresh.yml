@@ -1,0 +1,75 @@
+ version: '1.0'
+ build_version: 'v2'
+ mode: parallel
+#
+ stages:
+ - MyOwnStep
+ - prepare
+ - build
+# - test
+# - deploy
+#
+
+ steps:
+ 
+   clone:
+    title: "Cloning repository "
+    type: "git-clone"
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: '${{CF_REVISION}}'
+    stage: prepare
+   MyOwnStep:
+     title: Variable example
+     image: alpine
+     commands: 
+       - echo $CF_BUILD_ID 
+       - echo $CF_BRANCH_TAG_NORMALIZED 
+   MyAppDockerImage:
+     title: Building Docker Image
+     type: build
+     stage: build
+     image_name: cdk-workshop
+     working_directory: './${{CF_REPO_NAME}}'
+     tag: ${{CF_BRANCH_TAG_NORMALIZED}}
+     dockerfile: Dockerfile
+     registry: "docker.io"
+     disable_push: true
+#
+#   MyUnitTests:
+#     title: Running Unit tests
+#     stage: test
+#     image: ${{MyAppDockerImage}}
+#     commands:
+#     - npm run test
+#     - mvn test
+#     - rails test
+#     - ./my-unit-tests.sh
+#
+#   # Optional step as each pipeline automatically pushes to the Codefresh internal Registry
+#   PushingToRegistry:
+#     type: push
+#     stage: deploy
+#     title: Pushing To Registry
+#     candidate: ${{MyAppDockerImage}}
+#     registry: my-registry # Connect registries in account integrations
+#     tag: '${{CF_BRANCH}}'
+#
+#   DeployToCluster:
+#     title: deploying to k8s cluster
+#     type: deploy
+#     stage: deploy
+#     kind: kubernetes
+#     cluster: myK8sCluster #Add your cluster in integrations page
+#     namespace: my-namespace
+#     service: my-service
+#     candidate:
+#       # The image that will replace the original deployment image
+#       # The image that been build using Build step
+#       image: ${{MyAppDockerImage}}
+#       # The registry that the user's Kubernetes cluster can pull the image from
+#       # Codefresh will generate (if not found) secret and add it to the deployment so the Kubernetes master can pull it
+#       registry: cfcr
+#     when:
+#       branch:
+#         only:
+#         - master
