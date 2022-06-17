@@ -6,7 +6,7 @@
  - MyOwnStep
  - prepare
  - build
-# - test
+ - test
 # - deploy
 #
 
@@ -34,6 +34,27 @@
      dockerfile: Dockerfile
      registry: "docker.io"
      disable_push: true
+     when:
+      steps:
+        - name: clone
+          on:
+            - success
+   aws_test:
+    stage: test
+    title: aws deploy testing
+    image: ${{MyAppDockerImage}}
+    fail_fast: true
+    working_directory: /app
+    commands:
+      - npm run cdk deploy
+    environment:
+      - AWS_ACCESS_KEY_ID=${{AWS_ACCESS_KEY_ID}}
+      - AWS_SECRET_ACCESS_KEY=${{AWS_SECRET_ACCESS_KEY}}
+    when:
+      steps:
+        - name: MyAppDockerImage
+          on:
+            - success 
 #
 #   MyUnitTests:
 #     title: Running Unit tests
@@ -73,3 +94,4 @@
 #       branch:
 #         only:
 #         - master
+
