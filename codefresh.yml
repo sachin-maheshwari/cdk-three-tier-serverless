@@ -54,22 +54,23 @@
         - name: MyAppDockerImage
           on:
             - success
-   aws_deploy:
-    stage: "deploy"
-    title: "AWS deploy testing"
-    image: ${{MyAppDockerImage}}
-    fail_fast: true
-    working_directory: /app
-    commands:
-      - npm run cdk deploy
-    environment:
-      - AWS_ACCESS_KEY_ID=${{AWS_ACCESS_KEY_ID}}
-      - AWS_SECRET_ACCESS_KEY=${{AWS_SECRET_ACCESS_KEY}}
-    when:
-      steps:
-        - name: unit_test
-          on:
-            - success 
+#   aws_deploy:
+#    stage: "deploy"
+#    title: "AWS deploy testing"
+#    image: ${{MyAppDockerImage}}
+#    fail_fast: true
+#    working_directory: /app
+#    commands:
+#      - npm run cdk deploy
+#    environment:
+#      - AWS_ACCESS_KEY_ID=${{AWS_ACCESS_KEY_ID}}
+#      - AWS_SECRET_ACCESS_KEY=${{AWS_SECRET_ACCESS_KEY}}
+#    when:
+#      steps:
+#        - name: unit_test
+#         on:
+#            - success 
+
 #
 #   MyUnitTests:
 #     title: Running Unit tests
