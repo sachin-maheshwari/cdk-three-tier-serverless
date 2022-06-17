@@ -24,6 +24,11 @@
      commands: 
        - echo $CF_BUILD_ID 
        - echo $CF_BRANCH_TAG_NORMALIZED 
+     when:
+      steps:
+        - name: clone
+          on:
+            - success
    MyAppDockerImage:
      title: Building Docker Image
      type: build
@@ -40,8 +45,8 @@
           on:
             - success
    aws_test:
-    stage: test
-    title: aws deploy testing
+    stage: "test"
+    title: "aws deploy testing"
     image: ${{MyAppDockerImage}}
     fail_fast: true
     working_directory: /app
